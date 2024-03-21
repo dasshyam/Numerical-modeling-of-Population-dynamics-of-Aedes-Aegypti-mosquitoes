@@ -1,0 +1,35 @@
+function [MT,AT]=MT_AT(Mi,Ai,Mxminus,Mxplus,Myminus,Myplus,dx,dy,dt,W,vx,vy,i,j,p,par)
+
+                    
+                    
+                    M(i,j)=Mi;
+                    A(i,j)=Ai;
+                    M(i-1,j)=Mxminus;
+                    M(i+1,j)=Mxplus;
+                    M(i,j-1)=Myminus;
+                    M(i,j+1)=Myplus;
+                    
+                    Dx1=0.5*par.D;  Dx2=Dx1; % coeficiente de difusão na direção x
+                    Dy1=0.5*par.D; Dy2=Dy1; % coeficiente de difusão na direção y
+                    
+                    
+                    if (vx>0)
+                        M1=M(i,j);
+                        M2=M(i-1,j);
+                        else
+                        M1=M(i+1,j);
+                        M2=M(i,j);
+                    end
+            
+                      
+                    if (vy>0)
+                        M3=M(i,j);
+                        M4=M(i,j-1);
+                        else
+                        M3=M(i,j+1);
+                        M4=M(i,j);
+                    end
+                    Adv(i,j)=dy*(vx*M1-vx*M2)+dx*(vy*M3-vy*M4);
+                
+                    MT(i,j) = M(i,j)+(1/p)*(dt*phi(M(i,j),A(i,j),par)-W*Adv(i,j)+W*(Dx1*(M(i+1,j)-M(i,j))/dx + Dx2*(-M(i,j)+M(i-1,j))/dx + Dy1*(M(i,j+1)-M(i,j))/dy+Dy2*(-M(i,j)+M(i,j-1))/dy));
+                    AT(i,j) = A(i,j)+dt*psi(M(i,j),A(i,j),par);
